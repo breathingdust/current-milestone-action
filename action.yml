@@ -7,6 +7,9 @@ inputs:
   milestone_number:
     description: 'The target milestone number.'
     required: true
+  GITHUB_TOKEN:
+    description: 'The supplied repository level token.'
+    required: true    
 runs:
   using: 'node12'
   main: 'index.js'
