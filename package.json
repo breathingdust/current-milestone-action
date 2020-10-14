@@ -1,0 +1,12 @@
+{
+  "name": "current-milestone-action",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@octokit/action": "^3.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0"
+  }
+}

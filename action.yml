@@ -1,0 +1,13 @@
+name: 'Assign Pull and linked issues to Milestone'
+description: 'Assigns target pull request and all linked issues to specified milestone'
+inputs:
+  pull_number:
+    description: 'The target pull request number.'
+    required: true
+  milestone_number:
+    description: 'The target milestone number.'
+    required: true
+runs:
+  using: 'node12'
+  main: 'index.js'
+  
