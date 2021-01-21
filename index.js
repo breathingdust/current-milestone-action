@@ -42,9 +42,10 @@ async function main() {
   closeKeywords.forEach(function(keyword) {
     closeDelimiters.forEach(function(delimiter) {
       let regex = new RegExp(`${keyword}${delimiter}(\\d+)`, "ig");
-      let matches = regex.exec(pr.data.body);
-      if (matches) {
-        matchedIssues.push(matches[1]);
+      let match;
+
+      while ((match = regex.exec(pr.data.body)) !== null) {
+        matchedIssues.push(match[1]);
       }
     });
   });
