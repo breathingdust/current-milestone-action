@@ -17,10 +17,7 @@ const closeKeywords = [
   'resolved',
 ];
 
-const closeDelimiters = [
-  ' #',
-  ': #',
-];
+const closeDelimiters = [' #', ': #'];
 
 async function assignMilestone(issueNumber, milestoneNumber) {
   try {
@@ -32,7 +29,9 @@ async function assignMilestone(issueNumber, milestoneNumber) {
     });
     core.info(`Assigned issue ${issueNumber} to milestone ${milestoneNumber}`);
   } catch (error) {
-    core.setFailed(`Assigning milestone ${milestoneNumber} for pr '${issueNumber}' failed with error ${error}`);
+    core.setFailed(
+      `Assigning milestone ${milestoneNumber} for pr '${issueNumber}' failed with error ${error}`,
+    );
   }
 }
 
