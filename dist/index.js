@@ -11209,6 +11209,7 @@ async function main() {
   core.info(`Found ${matchedIssues.length} matched issues.`);
 
   const results = [];
+  results.push(assignMilestone(pullNumber, milestoneNumber));
   for (let index = 0; index < matchedIssues.length; index += 1) {
     results.push(assignMilestone(matchedIssues[index], milestoneNumber));
   }
