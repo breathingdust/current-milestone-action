@@ -11,6 +11,6 @@ inputs:
     description: 'The supplied repository level token.'
     required: true    
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'index.js'
   

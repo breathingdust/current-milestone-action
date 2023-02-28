@@ -1,12 +1,30 @@
 {
   "name": "current-milestone-action",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "main": "index.js",
+  "scripts": {
+    "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
+    "test": "jest src/",
+    "lint": "eslint src/",
+    "format-check": "prettier --check src/",
+    "all": "npm run lint && npm run format-check && npm run build && npm run test"
+  },
+  "author": "Simon Davis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/breathingdust/current-milestone-action/issues"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@octokit/action": "^3.1.1"
   },
   "devDependencies": {
-    "eslint": "^7.11.0"
+    "@vercel/ncc": "^0.36.1",
+    "eslint": "^7.11.0",
+    "prettier": "^2.8.4"
   }
 }
