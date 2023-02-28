@@ -1,49 +1,64 @@
 const core = require('@actions/core');
 const { Octokit } = require('@octokit/action');
-require("@octokit/action");
+require('@octokit/action');
 
-const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 const octokit = new Octokit();
 
 const closeKeywords = [
-  "close",
-  "closes",
-  "closed",
-  "fix",
-  "fixes",
-  "fixed",
-  "resolve",
-  "resolves",
-  "resolved",
+  'close',
+  'closes',
+  'closed',
+  'fix',
+  'fixes',
+  'fixed',
+  'resolve',
+  'resolves',
+  'resolved',
 ];
 
 const closeDelimiters = [
-  " #",
-  ": #",
+  ' #',
+  ': #',
 ];
 
+async function assignMilestone(issueNumber, milestoneNumber) {
+  try {
+    await octokit.request('PATCH /repos/:owner/:repo/issues/:issue_number', {
+      owner,
+      repo,
+      issue_number: issueNumber,
+      milestone: milestoneNumber,
+    });
+    core.info(`Assigned issue ${issueNumber} to milestone ${milestoneNumber}`);
+  } catch (error) {
+    core.setFailed(`Assigning milestone ${milestoneNumber} for pr '${issueNumber}' failed with error ${error}`);
+  }
+}
+
 async function main() {
-  const pull_number = core.getInput('pull_number');
-  const milestone_number = core.getInput('milestone_number');
+  const pullNumber = core.getInput('pull_number');
+  const milestoneNumber = core.getInput('milestone_number');
 
   let pr = {};
   try {
-    pr = await octokit.request("GET /repos/:owner/:repo/pulls/:pull_number", {
+    pr = await octokit.request('GET /repos/:owner/:repo/pulls/:pull_number', {
       owner,
       repo,
-      pull_number,
+      pull_number: pullNumber,
     });
   } catch (error) {
-    core.setFailed(`Getting pr for '${pull_number}' failed with error ${error}`);
-  }  
+    core.setFailed(`Getting pr for '${pullNumber}' failed with error ${error}`);
+  }
 
-  let matchedIssues = [];
+  const matchedIssues = [];
 
-  closeKeywords.forEach(function(keyword) {
-    closeDelimiters.forEach(function(delimiter) {
-      let regex = new RegExp(`${keyword}${delimiter}(\\d+)`, "ig");
+  closeKeywords.forEach((keyword) => {
+    closeDelimiters.forEach((delimiter) => {
+      const regex = new RegExp(`${keyword}${delimiter}(\\d+)`, 'ig');
       let match;
 
+      // eslint-disable-next-line no-cond-assign
       while ((match = regex.exec(pr.data.body)) !== null) {
         matchedIssues.push(match[1]);
       }
@@ -52,25 +67,12 @@ async function main() {
 
   core.info(`Found ${matchedIssues.length} matched issues.`);
 
-  for (const issue_number of matchedIssues) {
-    await assignMilestone(issue_number, milestone_number);
+  const results = [];
+  for (let index = 0; index < matchedIssues.length; index += 1) {
+    results.push(assignMilestone(matchedIssues[index], milestoneNumber));
   }
 
-  await assignMilestone(pull_number, milestone_number);
-}
-
-async function assignMilestone(issue_number,  milestone_number) {
-  try {
-    await octokit.request("PATCH /repos/:owner/:repo/issues/:issue_number", {
-      owner,
-      repo,
-      issue_number,
-      milestone: milestone_number
-    });
-    core.info(`Assigned issue ${issue_number} to milestone ${milestone_number}`);
-  } catch (error) {
-    core.setFailed(`Assigning milestone ${milestone_number} for pr '${issue_number}' failed with error ${error}`);
-  } 
+  await Promise.all(results);
 }
 
 try {
