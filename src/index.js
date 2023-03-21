@@ -1,6 +1,5 @@
 const core = require('@actions/core');
 const { Octokit } = require('@octokit/action');
-require('@octokit/action');
 
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 const octokit = new Octokit();
@@ -17,7 +16,7 @@ const closeKeywords = [
   'resolved',
 ];
 
-const closeDelimiters = [' #', ': #'];
+const closeDelimiters = [' #', ': #', ' '];
 
 async function assignMilestone(issueNumber, milestoneNumber) {
   try {
@@ -54,12 +53,14 @@ async function main() {
 
   closeKeywords.forEach((keyword) => {
     closeDelimiters.forEach((delimiter) => {
-      const regex = new RegExp(`${keyword}${delimiter}(\\d+)`, 'ig');
+      const regex = new RegExp(`${keyword}${delimiter}.*[#/](\\d+)`, 'ig');
       let match;
 
       // eslint-disable-next-line no-cond-assign
       while ((match = regex.exec(pr.data.body)) !== null) {
-        matchedIssues.push(match[1]);
+        if (match[1] !== "0000") { // skip sample matches from template
+          matchedIssues.push(match[1]);
+        }
       }
     });
   });
